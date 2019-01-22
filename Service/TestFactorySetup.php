@@ -40,7 +40,6 @@ class TestFactorySetup extends WebTestCase
         $dotenv = new Dotenv();
         $folder  = static::$kernel->getProjectDir();
         $dotenv->load($folder . '/.env');
-
         $dbPath  = getenv('DATABASE_URL');
 
         if(substr($dbPath,0,8) == 'mysql://')
@@ -49,8 +48,9 @@ class TestFactorySetup extends WebTestCase
         }
         else if(substr($dbPath,0,10) == 'sqlite:///')
         {
-            $file_out = $folder."/var/data/db_test/demo.sqlite";
-            $file_in  = $folder."/var/data/db_test/demo.sqlite.bkp";
+            $file_in  = $folder."/var/data/db_test/test.sqlite";
+
+            $file_out = substr($dbPath, 10);
 
             if(!file_exists($file_in))
             {

@@ -38,18 +38,24 @@ class TestFactorySetup extends WebTestCase
         $this->getClientOrCreateOne();
 
         $dotenv = new Dotenv();
-        $dotenv->load(__DIR__ . '/../../.env');
-
         $folder  = static::$kernel->getProjectDir();
+        $dotenv->load($folder . '/.env');
+
         $dbPath  = getenv('DATABASE_URL');
+
         if(substr($dbPath,0,8) == 'mysql://')
         {
             $this->runCommand('d:database:import var/data/db_test/demo.sql');
         }
         else if(substr($dbPath,0,10) == 'sqlite:///')
         {
-            $file_out  = $folder . '/var/data/db_test/demo.sqlite';
-            $file_in  = $folder . '/var/data/db_test/demo.sqlite.bkp';
+            $file_out = $folder."/var/data/db_test/demo.sqlite";
+            $file_in  = $folder."/var/data/db_test/demo.sqlite.bkp";
+
+            if(!file_exists($file_in))
+            {
+                copy($file_out,$file_in);
+            }
 
             copy($file_in,$file_out);
         }

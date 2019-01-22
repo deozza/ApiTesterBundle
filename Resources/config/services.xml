@@ -5,7 +5,8 @@
         http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <services>
-        <service id="request_sender" class="Deozza\ApiFesterBundle\Service\RequestSender">
-        </service>
+        <service id="request_sender"     class="Deozza\ApiFesterBundle\Service\RequestSender"></service>
+        <service id="test_asserter"      class="Deozza\ApiFesterBundle\Service\TestAsserter"></service>
+        <service id="test_factory_setup" class="Deozza\ApiFesterBundle\Service\TestFactorySetup"></service>
     </services>
 </container>

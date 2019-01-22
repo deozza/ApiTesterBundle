@@ -49,8 +49,7 @@ class TestFactorySetup extends WebTestCase
         else if(substr($dbPath,0,10) == 'sqlite:///')
         {
             $file_in  = $folder."/var/data/db_test/test.sqlite";
-
-            $file_out = substr($dbPath, 10);
+            $file_out = $folder.substr($dbPath, 30);
 
             if(!file_exists($file_in))
             {

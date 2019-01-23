@@ -32,7 +32,7 @@ class TestAsserter extends TestFactorySetup
 
         if(array_key_exists('out', $test))
         {
-            $out = json_decode($this->loadJsonFile($test['out']), true);
+            $out = json_decode($this->loadJsonFile($test['out'], false), true);
         }
 
         $headers["CONTENT-TYPE"] = "application/json";
@@ -55,9 +55,13 @@ class TestAsserter extends TestFactorySetup
         $this->assertResponseBody($this->client->getResponse(), $out);
     }
 
-    private function loadJsonFile($in)
+    private function loadJsonFile($filename, $defaultDir = "/Payloads/")
     {
-        return file_get_contents($in.".json");
+        $calledClass = get_called_class();
+        $jsonDir = $defaultDir ? "/Payloads/" : "/Responses/";
+
+        $location = dirname((new \ReflectionClass($calledClass))->getFileName()).$jsonDir;
+        return file_get_contents($location.$filename.".json");
     }
 
     private function assertStatusCode(Response $response, $expectedStatus)

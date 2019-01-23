@@ -70,6 +70,11 @@ class TestAsserter extends TestFactorySetup
     {
         $responseBody = $response->getContent();
 
+        if(is_string($responseBody))
+        {
+            return;
+        }
+
         if(empty($responseBody))
         {
             $responseBody = [];

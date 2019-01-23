@@ -70,12 +70,7 @@ class TestAsserter extends TestFactorySetup
     {
         $responseBody = $response->getContent();
 
-        if(is_string($responseBody))
-        {
-            return;
-        }
-
-        if(empty($responseBody))
+        if(json_decode($responseBody) == null)
         {
             $responseBody = [];
         }

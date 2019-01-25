@@ -1,11 +1,18 @@
 <?php
 namespace Deozza\ApiTesterBundle\Service;
 
-use Deozza\ApiTesterBundle\Service\TestFactorySetup;
+use Deozza\ApiTesterBundle\Exception\ExtraKeyException;
+use Deozza\ApiTesterBundle\Exception\MissingKeyException;
+use Deozza\ApiTesterBundle\Exception\TypeMismatchException;
+use Deozza\ApiTesterBundle\Exception\TypeUnknownException;
+use Deozza\ApiTesterBundle\Exception\ValueMismatchException;
 use Symfony\Component\HttpFoundation\Response;
 
 class TestAsserter extends TestFactorySetup
 {
+
+    const REGEXP_ASSERT_TYPE = "/^@\w+@/";
+
     protected function launchTestByKind($kind, $test)
     {
         if($kind == "unit")
@@ -52,7 +59,23 @@ class TestAsserter extends TestFactorySetup
         );
 
         $this->assertStatusCode($this->client->getResponse(),$test['status']);
-        $this->assertResponseBody($this->client->getResponse(), $out);
+
+        if($out)
+        {
+
+            $responseBody = $this->client->getResponse()->getContent();
+
+            if(json_decode($responseBody) == null)
+            {
+                $responseBody = [];
+            }
+            else
+            {
+                $responseBody = json_decode($responseBody, true);
+            }
+            $this->fullContext = $responseBody;
+            $this->exportVarFromJsonArray($responseBody, $out);
+        }
     }
 
     private function loadJsonFile($filename, $defaultDir = "/Payloads/")
@@ -70,44 +93,86 @@ class TestAsserter extends TestFactorySetup
         $this->assertEquals($responseStatus, $expectedStatus);
     }
 
-    private function assertResponseBody(Response $response, $expectedBody)
+    private function exportVarFromJsonArray($response, $expectedResponse)
     {
-        $responseBody = $response->getContent();
 
-        if(json_decode($responseBody) == null)
+        foreach($response as $key=>$value)
         {
-            $responseBody = [];
+            $keyExists = array_key_exists($key, $expectedResponse);
+
+            if(!$keyExists)
+            {
+                throw new ExtraKeyException($key." is not expected to be in response");
+            }
+
+            if(is_array($value) && is_array($expectedResponse[$key]))
+            {
+                if(is_array($expectedResponse[$key]))
+                {
+                    $this->exportVarFromJsonArray($value, $expectedResponse[$key]);
+                }
+            }
+            else
+            {
+                $this->assertValue($value, $expectedResponse[$key], $key);
+            }
+        }
+
+        foreach($expectedResponse as $key=>$value)
+        {
+            if(!array_key_exists($key, $response))
+            {
+                throw new MissingKeyException($key." is missing in response");
+            }
+        }
+    }
+
+    private function assertValue($responseValue, $expectedValue, $key)
+    {
+        if(preg_match(self::REGEXP_ASSERT_TYPE, $expectedValue, $matches, PREG_OFFSET_CAPTURE))
+        {
+            $type = $this->determineTypeFromRegexp($matches[0][0]);
+            if($type != gettype($responseValue))
+            {
+                throw new TypeMismatchException("\n\n$key is supposed to be a $type. Is ".gettype($responseValue). " instead.".print_r($this->fullContext));
+            }
         }
         else
         {
-            $responseBody = json_decode($responseBody, true);
+            if($responseValue != $expectedValue)
+            {
+                throw new ValueMismatchException("\n\n$key value expected to be $expectedValue. Got $responseValue instead.".print_r($this->fullContext));
+            }
         }
-
-        $comparator = new \TreeWalker(
-            [
-                "debug"=>true,
-                "returntype"=> "array"
-            ]
-        );
-
-        $result = $comparator->getdiff($responseBody, $expectedBody, true);
-
-        $this->assertEquals($result['new']    ,[] , $this->errorMessage("These properies are in excess"                , $result['new']    ));
-
-        $this->assertEquals($result['removed'],[] , $this->errorMessage("These properties are absent from the response",$result['removed'] ));
-
-        $this->assertEquals($result['edited'] ,[] , $this->errorMessage("A property does not have the expected value"  ,$result['edited']  ));
     }
 
-    private function errorMessage($message, $value)
+    private function determineTypeFromRegexp($regexp)
     {
-        $errorMessage = $message." : \n";
+        $typeArray = [
+            "@string@" => "string",
+            "@int@" => "integer",
+            "@integer@" => "integer",
+            "@bool@" => "boolean",
+            "@boolean@" => "boolean",
+            "@double@" => "double",
+            "@float@" => "double",
+        ];
 
-        foreach($value as $key=>$variable)
+        $specialTypeArray = [
+
+        ];
+
+        if(array_key_exists($regexp, $typeArray))
         {
-            $errorMessage .= "At key ".$key." : ".json_encode($variable)."\n";
+            return $typeArray[$regexp];
         }
-
-        return $errorMessage;
+        elseif(array_key_exists($regexp, $specialTypeArray))
+        {
+            return;
+        }
+        else
+        {
+            throw new TypeUnknownException("The type $regexp is not suppported");
+        }
     }
 }

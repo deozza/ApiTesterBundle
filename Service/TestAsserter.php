@@ -46,8 +46,9 @@ class TestAsserter extends TestFactorySetup
 
         if(array_key_exists('token', $test))
         {
-            $headers['Authorization'] = $test['token'];
+            $headers['HTTP_AUTHORIZATION'] = "Bearer ".$test['token'];
         }
+
 
         $this->client->request(
             $test['method'],

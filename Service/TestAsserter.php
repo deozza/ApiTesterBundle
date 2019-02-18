@@ -46,7 +46,7 @@ class TestAsserter extends TestFactorySetup
 
         if(array_key_exists('token', $test))
         {
-            $headers['X-AUTH-TOKEN'] = $test['token'];
+            $headers['Authorization'] = $test['token'];
         }
 
         $this->client->request(
@@ -132,9 +132,20 @@ class TestAsserter extends TestFactorySetup
         if(preg_match(self::REGEXP_ASSERT_TYPE, $expectedValue, $matches, PREG_OFFSET_CAPTURE))
         {
             $type = $this->determineTypeFromRegexp($matches[0][0]);
-            if($type != gettype($responseValue))
+
+            if(substr($type, 0, 1) == "\\")
             {
-                throw new TypeMismatchException("\n\n$key is supposed to be a $type. Is ".gettype($responseValue). " instead.".print_r($this->fullContext));
+                if(is_a($responseValue, $type))
+                {
+                    throw new TypeMismatchException("\n\n$key is supposed to be a $type. Is ".gettype($responseValue). " instead.".print_r($this->fullContext));
+                }
+            }
+            else
+            {
+                if($type != gettype($responseValue))
+                {
+                    throw new TypeMismatchException("\n\n$key is supposed to be a $type. Is ".gettype($responseValue). " instead.".print_r($this->fullContext));
+                }
             }
         }
         else
@@ -156,6 +167,7 @@ class TestAsserter extends TestFactorySetup
             "@boolean@" => "boolean",
             "@double@" => "double",
             "@float@" => "double",
+            "@date@" => "\DateTime"
         ];
 
         $specialTypeArray = [

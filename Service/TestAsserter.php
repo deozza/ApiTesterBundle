@@ -23,7 +23,8 @@ class TestAsserter extends TestFactorySetup
         {
             foreach($test as $item)
             {
-                $this->assertTest($item);
+                $this->launchTestByKind($item['kind'], $item['test']);
+                $this->client->restart();
             }
         }
     }

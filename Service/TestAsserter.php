@@ -40,13 +40,11 @@ class TestAsserter extends TestFactorySetup
             $in = $this->loadJsonFile($test['in']);
         }
 
-        foreach($test as $value)
+        foreach($test as $key=>$value)
         {
-            $value = $this->replaceValue($value);
+            $test[$key]= $this->replaceValue($value);
         }
-
-        var_dump($test);
-
+        
         $headers["CONTENT-TYPE"] = "application/json";
 
         if(array_key_exists('token', $test))

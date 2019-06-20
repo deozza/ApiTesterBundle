@@ -1,6 +1,7 @@
 <?php
 namespace Deozza\ApiTesterBundle\Service;
 
+use Deozza\ApiTesterBundle\Exception\EnvMismatchException;
 use Deozza\ApiTesterBundle\Exception\ExtraKeyException;
 use Deozza\ApiTesterBundle\Exception\MissingKeyException;
 use Deozza\ApiTesterBundle\Exception\TypeMismatchException;
@@ -12,6 +13,7 @@ class TestAsserter extends TestFactorySetup
 {
 
     const REGEXP_ASSERT_TYPE = "/^@\w+@/";
+    private $env = [];
 
     protected function launchTestByKind($kind, $test)
     {
@@ -23,7 +25,7 @@ class TestAsserter extends TestFactorySetup
         {
             foreach($test as $item)
             {
-                $this->launchTestByKind($item['kind'], $item['test']);
+                $this->launchTestByKind("unit", $item);
                 $this->client->restart();
             }
         }
@@ -38,13 +40,19 @@ class TestAsserter extends TestFactorySetup
             $in = $this->loadJsonFile($test['in']);
         }
 
+        foreach($test as $value)
+        {
+            $value = $this->replaceValue($value);
+        }
+
+        var_dump($test);
+
         $headers["CONTENT-TYPE"] = "application/json";
 
         if(array_key_exists('token', $test))
         {
             $headers['HTTP_AUTHORIZATION'] = "Bearer ".$test['token'];
         }
-
 
         $this->client->request(
             $test['method'],
@@ -127,7 +135,8 @@ class TestAsserter extends TestFactorySetup
 
     private function assertValue($responseValue, $expectedValue, $key)
     {
-        if(preg_match(self::REGEXP_ASSERT_TYPE, $expectedValue, $matches, PREG_OFFSET_CAPTURE))
+        $explodedExpectedValue = explode(".", $expectedValue);
+        if(preg_match(self::REGEXP_ASSERT_TYPE, $explodedExpectedValue[0], $matches, PREG_OFFSET_CAPTURE))
         {
             $type = $this->determineTypeFromRegexp($matches[0][0]);
 
@@ -144,6 +153,12 @@ class TestAsserter extends TestFactorySetup
                 {
                     throw new TypeMismatchException("\n\n$key is supposed to be a $type. Is ".gettype($responseValue). " instead.".print_r($this->fullContext));
                 }
+            }
+
+            for($i=1; $i<count($explodedExpectedValue); $i++)
+            {
+                $function = explode("(", $explodedExpectedValue[$i]);
+                $this->{$function[0]}($function[1], $responseValue);
             }
         }
         else
@@ -184,5 +199,27 @@ class TestAsserter extends TestFactorySetup
         {
             throw new TypeUnknownException("The type $regexp is not suppported");
         }
+    }
+
+    private function catchAs($name, $value)
+    {
+        $this->env[substr($name, 0, strlen($name)-1)] = $value;
+    }
+
+    private function replaceValue($toReplace)
+    {
+        $replaceValue = [];
+
+        if(!preg_match('/#(\w+)#/', $toReplace, $replaceValue))
+        {
+            return $toReplace;
+        }
+        if(!in_array($replaceValue[1], $this->env))
+        {
+            throw new EnvMismatchException($replaceValue[1]." has not been catched in a previous test");
+        }
+
+        $toReplace = str_replace($replaceValue[0], $replaceValue[1], $toReplace);
+        return $toReplace;
     }
 }

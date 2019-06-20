@@ -32,15 +32,10 @@ class TestAsserter extends TestFactorySetup
     private function assertTest($test)
     {
         $in = null;
-        $out = [];
+        $out = null;
         if(array_key_exists('in', $test))
         {
             $in = $this->loadJsonFile($test['in']);
-        }
-
-        if(array_key_exists('out', $test))
-        {
-            $out = json_decode($this->loadJsonFile($test['out'], false), true);
         }
 
         $headers["CONTENT-TYPE"] = "application/json";
@@ -62,8 +57,9 @@ class TestAsserter extends TestFactorySetup
 
         $this->assertStatusCode($this->client->getResponse(),$test['status']);
 
-        if($out)
+        if(array_key_exists('out', $test))
         {
+            $out = json_decode($this->loadJsonFile($test['out'], false), true);
 
             $responseBody = $this->client->getResponse()->getContent();
 
@@ -104,7 +100,7 @@ class TestAsserter extends TestFactorySetup
 
             if(!$keyExists)
             {
-                throw new ExtraKeyException($key." is not expected to be in response");
+                throw new ExtraKeyException($key." is not expected to be in response. Expected response is : \n".json_encode($expectedResponse)."\n \n Got : \n".json_encode($response));
             }
 
             if(is_array($value) && is_array($expectedResponse[$key]))
@@ -124,7 +120,7 @@ class TestAsserter extends TestFactorySetup
         {
             if(!array_key_exists($key, $response))
             {
-                throw new MissingKeyException($key." is missing in response");
+                throw new MissingKeyException($key." is missing in response. Expected response is : \n\".json_encode($expectedResponse).\"\n \n Got : \n\".json_encode($response)");
             }
         }
     }

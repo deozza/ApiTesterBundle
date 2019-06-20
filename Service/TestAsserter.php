@@ -44,7 +44,7 @@ class TestAsserter extends TestFactorySetup
         {
             $test[$key]= $this->replaceValue($value);
         }
-        
+
         $headers["CONTENT-TYPE"] = "application/json";
 
         if(array_key_exists('token', $test))
@@ -156,7 +156,7 @@ class TestAsserter extends TestFactorySetup
             for($i=1; $i<count($explodedExpectedValue); $i++)
             {
                 $function = explode("(", $explodedExpectedValue[$i]);
-                $this->{$function[0]}($function[1], $responseValue);
+                $this->{$function[0]}($function[1], $responseValue, $key);
             }
         }
         else
@@ -199,9 +199,16 @@ class TestAsserter extends TestFactorySetup
         }
     }
 
-    private function catchAs($name, $value)
+    private function catchAs($name, $value, $key)
     {
         $this->env[substr($name, 0, strlen($name)-1)] = $value;
+    }
+
+    private function isUuid($name, $value, $key)
+    {
+        $uuidRegex = "/^([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})$/";
+        $match = preg_match($uuidRegex, $value);
+        $this->assertEquals(1, $match, $key." is not a valid uuid");
     }
 
     private function replaceValue($toReplace)

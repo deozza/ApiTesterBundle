@@ -5,15 +5,16 @@ ApiTesterBundle
 [![mysql](https://img.shields.io/badge/mysql-%5E5.7-blue.svg)]()
 [![sqlite](https://img.shields.io/badge/sqlite-3-blue.svg)]()
 [![symfony](https://img.shields.io/badge/symfony-%5E4.2-blue.svg)](https://symfony.com/doc/current/index.html#gsc.tab=0)
-[![Stable](https://img.shields.io/badge/stable-1.0-brightgreen.svg)](https://github.com/deozza/Philarmony/tree/2.0.0)
+[![Stable](https://img.shields.io/badge/stable-1.1-brightgreen.svg)](https://github.com/deozza/Philarmony/tree/2.0.0)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)]()
 
 ## Table of contents
 
  * [About](#about)
  * [Installation](#installation)
- * [Example of usage](#example-of-usage)
- * [How it works](#how-it-works)
+ * [Database preparation](#database-preparation)
+ * [How to use](#how-to-use)
+ * [Folder structure](#folder-structure)
  * [Road map](#road-map)
 
 ## About
@@ -116,27 +117,27 @@ __For now, only GET, POST, PUT, PATCH and DELETE methods are handled by ApiTeste
 
 With ApiTesterBundle, you are able to test your application by sending requests one by one ("unit" testing) and by sending a group of request ("scenario").
 
- * [Read more](src/Resources/documentation/TEST_KINDS.md)
+ * [Read more](src/Resources/doc/TEST_KINDS.md)
 
 #### In (payloads)
 
 You are able to test your application by sending a specific payload with the `in` option and check how it reacts.
 
- * [Read more](src/Resources/documentation/PAYLOADS.md)
+ * [Read more](src/Resources/doc/PAYLOADS.md)
  
 
 #### Out (expected responses)
 
 You are able to check the response of the requests you have sent with the option `out`.
 
- * [Read more](src/Resources/documentation/RESPONSES.md)
+ * [Read more](src/Resources/doc/RESPONSES.md)
 
 
 #### Testing with patterns
 
 Sometimes, value sent by your app are hard to test because they are unpredictable. Testing with patterns will allow ApiTesterBundle to assert these values are in a specific scope and even manipulate them for future tests.
 
- * [Read more](src/Resources/documentation/PATTERNS.md)
+ * [Read more](src/Resources/doc/PATTERNS.md)
 
 ## Folder structure
 

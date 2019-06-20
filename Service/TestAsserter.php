@@ -211,6 +211,45 @@ class TestAsserter extends TestFactorySetup
         $this->assertEquals(1, $match, $key." is not a valid uuid");
     }
 
+    private function valueLesserThan($expectedValue, $value, $key)
+    {
+        $expectedValue = substr($expectedValue, 0, strlen($expectedValue)-1);
+        $this->assertLessThan($expectedValue, $value);
+    }
+
+    private function valueLesserThanOrEqual($expectedValue, $value, $key)
+    {
+        $expectedValue = substr($expectedValue, 0, strlen($expectedValue)-1);
+        $this->assertLessThanOrEqual($expectedValue, $value);
+    }
+    private function valueGreaterThan($expectedValue, $value, $key)
+    {
+        $expectedValue = substr($expectedValue, 0, strlen($expectedValue)-1);
+        $this->assertGreaterThan($expectedValue, $value);
+    }
+    private function valueGreaterThanOrEqual($expectedValue, $value, $key)
+    {
+        $expectedValue = substr($expectedValue, 0, strlen($expectedValue)-1);
+        $this->assertGreaterThanOrEqual($expectedValue, $value);
+    }
+    private function before($expectedValue, $value, $key)
+    {
+        $expectedValue = substr($expectedValue, 0, strlen($expectedValue)-1);
+        $dateToCompare = new \DateTime("now");
+        $dateToCompare->add(new \DateInterval($expectedValue));
+        $dateToCompare->getTimestamp();
+
+        $this->assertLessThan($dateToCompare, $value);
+    }
+    private function after($expectedValue, $value, $key)
+    {
+        $expectedValue = substr($expectedValue, 0, strlen($expectedValue)-1);
+        $dateToCompare = new \DateTime("now");
+        $dateToCompare->add(new \DateInterval($expectedValue));
+        $dateToCompare->getTimestamp();
+
+        $this->assertGreaterThan($dateToCompare, $value);
+    }
     private function replaceValue($toReplace)
     {
         $replaceValue = [];

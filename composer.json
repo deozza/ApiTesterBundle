@@ -1,7 +1,14 @@
 {
     "name": "deozza/api-tester-bundle",
+    "description": "A bundle to test Symfony API",
     "type": "symfony-bundle",
     "license": "MIT",
+    "authors": [
+        {
+            "name": "Edenn Touitou",
+            "email": "deozza@gmail.com"
+        }
+    ],
     "version": "1.1.1",
     "require": {
         "php": "^7.0",
@@ -12,7 +19,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Deozza\\ApiTesterBundle\\": ""
+            "Deozza\\ApiTesterBundle\\": "src/"
         },
         "exclude-from-classmap": [
             "/Tests/"
@@ -20,7 +27,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Deozza\\ApiTesterBundle\\Tests\\": "Tests"
+            "Deozza\\ApiTesterBundle\\Tests\\": "tests/"
         }
     }
 }

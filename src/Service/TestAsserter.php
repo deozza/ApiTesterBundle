@@ -49,7 +49,7 @@ class TestAsserter extends TestFactorySetup
 
         if(array_key_exists('token', $test))
         {
-            $headers['HTTP_AUTHORIZATION'] = "Bearer ".$test['token'];
+            $headers['HTTP_AUTHORIZATION'] = "Bearer:".$test['token'];
         }
 
         $this->client->request(
@@ -236,7 +236,20 @@ class TestAsserter extends TestFactorySetup
     {
         $expectedValue = substr($expectedValue, 0, strlen($expectedValue)-1);
         $dateToCompare = new \DateTime("now");
-        $dateToCompare->add(new \DateInterval($expectedValue));
+
+        if(strlen($expectedValue)>1)
+        {
+            if(substr($expectedValue, 0, 1) === "-")
+            {
+                $dateToCompare->sub(new \DateInterval(substr($expectedValue, 1, strlen($expectedValue)-2)));
+
+            }
+            else
+            {
+                $dateToCompare->add(new \DateInterval($expectedValue));
+            }
+        }
+
         $dateToCompare->getTimestamp();
 
         $this->assertLessThan($dateToCompare, $value);
@@ -245,7 +258,20 @@ class TestAsserter extends TestFactorySetup
     {
         $expectedValue = substr($expectedValue, 0, strlen($expectedValue)-1);
         $dateToCompare = new \DateTime("now");
-        $dateToCompare->add(new \DateInterval($expectedValue));
+
+        if(strlen($expectedValue)>1)
+        {
+            if(substr($expectedValue, 0, 1) === "-")
+            {
+                $dateToCompare->sub(new \DateInterval(substr($expectedValue, 1, strlen($expectedValue)-2)));
+
+            }
+            else
+            {
+                $dateToCompare->add(new \DateInterval($expectedValue));
+            }
+        }
+        
         $dateToCompare->getTimestamp();
 
         $this->assertGreaterThan($dateToCompare, $value);
@@ -258,12 +284,12 @@ class TestAsserter extends TestFactorySetup
         {
             return $toReplace;
         }
-        if(!in_array($replaceValue[1], $this->env))
+        if(!array_key_exists($replaceValue[1], $this->env))
         {
             throw new EnvMismatchException($replaceValue[1]." has not been catched in a previous test");
         }
 
-        $toReplace = str_replace($replaceValue[0], $replaceValue[1], $toReplace);
+        $toReplace = str_replace($replaceValue[0], $this->env[$replaceValue[1]], $toReplace);
         return $toReplace;
     }
 }

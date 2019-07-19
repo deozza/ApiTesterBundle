@@ -1,12 +1,12 @@
 <?php
-namespace Deozza\ApiTesterBundle\DependencyInjection;
+namespace Deozza\PhilarmonyApiTesterBundle\DependencyInjection;
 
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\Extension;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 
-class DeozzaApiTesterBundleExtension extends Extension
+class DeozzaPhilarmonyApiTesterBundleExtension extends Extension
 {
     public function load(array $configs, ContainerBuilder $container)
     {

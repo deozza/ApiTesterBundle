@@ -2,4 +2,4 @@
 
 namespace Deozza\PhilarmonyApiTesterBundle\Exception;
 
-class ExtraKeyException extends \Exception{}
+class TestDatabaseNotFoundException extends \Exception{}

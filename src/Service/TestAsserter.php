@@ -1,12 +1,12 @@
 <?php
-namespace Deozza\ApiTesterBundle\Service;
+namespace Deozza\PhilarmonyApiTesterBundle\Service;
 
-use Deozza\ApiTesterBundle\Exception\EnvMismatchException;
-use Deozza\ApiTesterBundle\Exception\ExtraKeyException;
-use Deozza\ApiTesterBundle\Exception\MissingKeyException;
-use Deozza\ApiTesterBundle\Exception\TypeMismatchException;
-use Deozza\ApiTesterBundle\Exception\TypeUnknownException;
-use Deozza\ApiTesterBundle\Exception\ValueMismatchException;
+use Deozza\PhilarmonyApiTesterBundle\Exception\EnvMismatchException;
+use Deozza\PhilarmonyApiTesterBundle\Exception\ExtraKeyException;
+use Deozza\PhilarmonyApiTesterBundle\Exception\MissingKeyException;
+use Deozza\PhilarmonyApiTesterBundle\Exception\TypeMismatchException;
+use Deozza\PhilarmonyApiTesterBundle\Exception\TypeUnknownException;
+use Deozza\PhilarmonyApiTesterBundle\Exception\ValueMismatchException;
 use Symfony\Component\HttpFoundation\Response;
 
 class TestAsserter extends TestFactorySetup

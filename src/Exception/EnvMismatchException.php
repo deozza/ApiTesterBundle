@@ -1,5 +1,5 @@
 <?php
 
-namespace Deozza\ApiTesterBundle\Exception;
+namespace Deozza\PhilarmonyApiTesterBundle\Exception;
 
 class EnvMismatchException extends \Exception{}

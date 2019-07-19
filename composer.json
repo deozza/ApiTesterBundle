@@ -1,5 +1,5 @@
 {
-    "name": "deozza/api-tester-bundle",
+    "name": "deozza/philarmony-api-tester-bundle",
     "description": "A bundle to test Symfony API",
     "type": "symfony-bundle",
     "license": "MIT",
@@ -9,7 +9,7 @@
             "email": "deozza@gmail.com"
         }
     ],
-    "version": "1.1.3",
+    "version": "3.0.0",
     "require": {
         "php": "^7.0",
         "symfony/phpunit-bridge": "4.2.*",
@@ -19,7 +19,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Deozza\\ApiTesterBundle\\": "src/"
+            "Deozza\\PhilarmonyApiTesterBundle\\": "src/"
         },
         "exclude-from-classmap": [
             "/Tests/"
@@ -27,7 +27,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Deozza\\ApiTesterBundle\\Tests\\": "tests/"
+            "Deozza\\PhilarmonyApiTesterBundle\\Tests\\": "tests/"
         }
     }
 }

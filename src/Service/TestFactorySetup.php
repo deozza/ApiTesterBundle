@@ -1,6 +1,8 @@
 <?php
-namespace Deozza\ApiTesterBundle\Service;
+namespace Deozza\PhilarmonyApiTesterBundle\Service;
 
+use Deozza\PhilarmonyApiTesterBundle\Exception\MissingKeyException;
+use Deozza\PhilarmonyApiTesterBundle\Exception\TestDatabaseNotFoundException;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Console\Input\StringInput;
@@ -10,6 +12,18 @@ class TestFactorySetup extends WebTestCase
 {
     protected $client;
     protected $application;
+
+    public function setTestDatabasePath(string $testDatabasePath): self
+    {
+        $this->testDatabasePath = $testDatabasePath;
+        return $this;
+    }
+
+    private function getTestDatabasePath(): ?string
+    {
+        return $this->testDatabasePath;
+    }
+
     public function getClientOrCreateOne()
     {
         if (null === $this->client)
@@ -29,6 +43,18 @@ class TestFactorySetup extends WebTestCase
     }
     public function setUp()
     {
+        $databasePath = $this->getTestDatabasePath();
+
+        if(empty($databasePath))
+        {
+            throw new MissingKeyException("You must define the database used for the test");
+        }
+
+        if(!file_exists($databasePath))
+        {
+            throw new TestDatabaseNotFoundException($databasePath." does not exist");
+        }
+
         static::$kernel = static::createKernel();
         static::$kernel->boot();
         $this->em = static::$kernel->getContainer()
@@ -44,11 +70,11 @@ class TestFactorySetup extends WebTestCase
 
         if(substr($dbPath,0,8) == 'mysql://')
         {
-            $this->runCommand('d:database:import var/data/db_test/demo.sql');
+            $this->runCommand('d:database:import '.$databasePath);
         }
         else if(substr($dbPath,0,10) == 'sqlite:///')
         {
-            $file_in  = $folder."/var/data/db_test/test.sqlite";
+            $file_in  = $databasePath;
             $file_out = $folder.substr($dbPath, 30);
 
             if(!file_exists($file_in))

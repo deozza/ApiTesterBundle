@@ -1,7 +1,7 @@
 Patterns
 =
 
-Sometimes, value sent by your app are hard to test because they are unpredictable. Testing with patterns will allow ApiTesterBundle to assert these values are in a specific scope and even manipulate them for future tests.
+Sometimes, value sent by your app are hard to test because they are unpredictable. Testing with patterns will allow PhilarmonyApiTester to assert these values are in a specific scope and even manipulate them for future tests.
 
 ## Asserting patterns
 

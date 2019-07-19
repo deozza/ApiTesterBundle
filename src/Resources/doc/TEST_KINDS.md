@@ -1,7 +1,7 @@
 Test kinds
 =
 
-With ApiTesterBundle, you are able to test your application by sending requests one by one ("unit" testing) and by sending a group of request ("scenario").
+With PhilarmonyApiTester, you are able to test your application by sending requests one by one ("unit" testing) and by sending a group of request ("scenario").
 
 ## Unit testing
 

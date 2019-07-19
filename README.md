@@ -1,4 +1,4 @@
-ApiTesterBundle
+PhilarmonyApiTester
 =
 
 [![php](https://img.shields.io/badge/php-%5E7.2-blue.svg)]()
@@ -19,7 +19,7 @@ ApiTesterBundle
 
 ## About
 
-ApiTesterBundle is a bundle made to test your API. It ensures the quality and the sturdiness of your application via unit and scenario testing.
+PhilarmonyApiTester is a bundle made to test your API. It ensures the quality and the sturdiness of your application via unit and scenario testing.
 
 ## Installation
 
@@ -50,12 +50,14 @@ To tests a feature of your application, you need to create a folder in the `test
 <?php
 namespace App\Tests\FooFeature;
 
-use Deozza\ApiTesterBundle\Service\TestAsserter;
+use Deozza\PhilarmonyApiTester\Service\TestAsserter;
 
 class FooControllerTest extends TestAsserter
 {
+    const TEST_DATABASE_PATH = __DIR__."/path/to/db.sql";
   public function setUp()
   {
+      parent::setTestDatabasePath(self::TEST_DATABASE_PATH);
       parent::setUp();
   }
 
@@ -111,11 +113,11 @@ public function addDataProvider()
 | test.in     | The payload sent with the request         | Yes         |
 | test.out    | The expected response from the request    | Tes         |
 
-__For now, only GET, POST, PUT, PATCH and DELETE methods are handled by ApiTesterBundle__
+__For now, only GET, POST, PUT, PATCH and DELETE methods are handled by PhilarmonyApiTester__
 
 #### Different kinds of tests
 
-With ApiTesterBundle, you are able to test your application by sending requests one by one ("unit" testing) and by sending a group of request ("scenario").
+With PhilarmonyApiTester, you are able to test your application by sending requests one by one ("unit" testing) and by sending a group of request ("scenario").
 
  * [Read more](src/Resources/doc/TEST_KINDS.md)
 
@@ -135,7 +137,7 @@ You are able to check the response of the requests you have sent with the option
 
 #### Testing with patterns
 
-Sometimes, value sent by your app are hard to test because they are unpredictable. Testing with patterns will allow ApiTesterBundle to assert these values are in a specific scope and even manipulate them for future tests.
+Sometimes, value sent by your app are hard to test because they are unpredictable. Testing with patterns will allow PhilarmonyApiTester to assert these values are in a specific scope and even manipulate them for future tests.
 
  * [Read more](src/Resources/doc/PATTERNS.md)
 

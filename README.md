@@ -25,7 +25,7 @@ PhilarmonyApiTester is a bundle made to test your API. It ensures the quality an
 
 You can install using composer, assuming it is already installed globally :
 
-`composer require deozza/api-tester-bundle`
+`composer require deozza/philarmony-api-tester-bundle`
 
 ## Database preparation
 

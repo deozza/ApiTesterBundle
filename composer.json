@@ -12,9 +12,9 @@
     "version": "3.0.0",
     "require": {
         "php": "^7.0",
-        "symfony/phpunit-bridge": "4.2.*",
-        "symfony/browser-kit": "4.2.*",
-        "symfony/dotenv": "4.2.*",
+        "symfony/phpunit-bridge": "^4.2.0 || ^4.3.0",
+        "symfony/browser-kit": "^4.2.0 || ^4.3.0",
+        "symfony/dotenv": "^4.2.0 || ^4.3.0",
         "guzzlehttp/guzzle": "^6.3"
     },
     "autoload": {

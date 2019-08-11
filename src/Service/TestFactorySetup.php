@@ -65,28 +65,41 @@ class TestFactorySetup extends WebTestCase
 
         $dotenv = new Dotenv();
         $folder  = static::$kernel->getProjectDir();
-        $dotenv->load($folder . '/.env');
-        $dbPath  = getenv('DATABASE_URL');
+        $dotenv->load($folder . '/.env.test');
+        $dbManager  = getenv('DB_MANAGER');
 
-        if(substr($dbPath,0,8) == 'mysql://')
+        switch($dbManager)
         {
-            $this->runCommand('d:database:import '.$databasePath);
-        }
-        else if(substr($dbPath,0,10) == 'sqlite:///')
-        {
-            $file_in  = $databasePath;
-            $file_out = $folder.substr($dbPath, 30);
+            case 'mysql':
+                {
+                    $this->runCommand('d:database:import '.$databasePath);
+                }
+                break;
+            case 'sqlite':
+                {
+                    $file_in  = $databasePath;
+                    $file_out = $folder.substr(getenv('DATABASE_URL'), 30);
 
-            if(!file_exists($file_in))
-            {
-                copy($file_out,$file_in);
-            }
+                    if(!file_exists($file_in))
+                    {
+                        copy($file_out,$file_in);
+                    }
 
-            copy($file_in,$file_out);
-        }
-        else
-        {
-            throw new \Exception("Bad test_database_url parameter", 1);
+                    copy($file_in,$file_out);
+                }
+                break;
+            case 'mongodb':
+                {
+                    if(!is_dir($databasePath))
+                    {
+                        throw new TestDatabaseNotFoundException("$databasePath is not a valid test database or does not exist.", 1);
+                    }
+
+                    shell_exec('mongorestore --drop -d'.static::$kernel->getContainer()->hasParameter('mongodb_url').' '.$databasePath. ' 2>&1');
+                }
+                break;
+            default: throw new TestDatabaseNotFoundException("$dbManager is not handled. Valid database managers are 'mysql', 'mongodb' and 'sqlite'.", 1);
+                break;
         }
     }
     protected function runCommand($command)
@@ -98,5 +111,4 @@ class TestFactorySetup extends WebTestCase
     {
         parent::tearDown();
     }
-
 }

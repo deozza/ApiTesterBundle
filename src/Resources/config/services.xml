@@ -7,16 +7,5 @@
     <services>
         <service id="test_asserter"      class="Deozza\PhilarmonyApiTesterBundle\Service\TestAsserter"></service>
         <service id="test_factory_setup" class="Deozza\PhilarmonyApiTesterBundle\Service\TestFactorySetup"></service>
-
-        <service class="Deozza\PhilarmonyApiTesterBundle\Service\Fixtures\FixturesSchemaLoader" id="philarmony.fixtures_schema_loader">
-            <bind key="$schemaLoader" type="service" id="philarmony.fixtures_schema_loader"/>
-            <argument key="$path">%kernel.project_dir%</argument>
-        </service>
-        <service id="Deozza\PhilarmonyApiTesterBundle\Service\Fixtures\FixturesSchemaLoader" alias="philarmony.fixtures_schema_loader" />
-
-        <service id="Deozza\PhilarmonyApiTesterBundle\Command\LoadFixturesCommand">
-            <tag name="console.command" command="philarmony:fixtures:load"/>
-            <bind key="$fixturesSchemaLoader" type="service" id="philarmony.fixtures_schema_loader"/>
-        </service>
     </services>
 </container>

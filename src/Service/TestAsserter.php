@@ -15,6 +15,11 @@ class TestAsserter extends TestFactorySetup
     const REGEXP_ASSERT_TYPE = "/^@\w+@/";
     private $env = [];
 
+    public function setEnv(array $env): self
+    {
+        $this->env = $env;
+        return $this;
+    }
     protected function launchTestByKind($kind, $test)
     {
         if($kind == "unit")
@@ -99,7 +104,6 @@ class TestAsserter extends TestFactorySetup
 
     private function exportVarFromJsonArray($response, $expectedResponse)
     {
-
         foreach($response as $key=>$value)
         {
             $keyExists = array_key_exists($key, $expectedResponse);
@@ -271,7 +275,7 @@ class TestAsserter extends TestFactorySetup
                 $dateToCompare->add(new \DateInterval($expectedValue));
             }
         }
-        
+
         $dateToCompare->getTimestamp();
 
         $this->assertGreaterThan($dateToCompare, $value);

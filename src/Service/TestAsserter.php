@@ -31,7 +31,6 @@ class TestAsserter extends TestFactorySetup
             foreach($test as $item)
             {
                 $this->launchTestByKind("unit", $item);
-                $this->client->restart();
             }
         }
     }
@@ -43,6 +42,13 @@ class TestAsserter extends TestFactorySetup
         if(array_key_exists('in', $test))
         {
             $in = $this->loadJsonFile($test['in']);
+            $inAsObject = json_decode($in, true);
+            foreach($inAsObject as $key=>$value)
+            {
+                $inAsObject[$key] = $this->replaceValue($value);
+            }
+
+            $in = json_encode($inAsObject);
         }
 
         foreach($test as $key=>$value)

@@ -43,41 +43,52 @@ class TestFactorySetup extends WebTestCase
     }
     public function setUp()
     {
-        $databasePath = $this->getTestDatabasePath();
+        $this->databasePath = $this->getTestDatabasePath();
 
-        if(empty($databasePath))
+        if(empty($this->databasePath))
         {
             throw new MissingKeyException("You must define the database used for the test");
         }
 
-        if(!file_exists($databasePath))
+        if(!file_exists($this->databasePath))
         {
-            throw new TestDatabaseNotFoundException($databasePath." does not exist");
+            throw new TestDatabaseNotFoundException($this->databasePath." does not exist");
         }
 
         static::$kernel = static::createKernel();
         static::$kernel->boot();
-        $this->em = static::$kernel->getContainer()
-            ->get('doctrine')
-            ->getManager()
-        ;
         $this->getClientOrCreateOne();
 
         $dotenv = new Dotenv();
         $folder  = static::$kernel->getProjectDir();
-        $dotenv->load($folder . '/.env.test');
-        $dbManager  = getenv('DB_MANAGER');
+        $dotenv->load($folder . '/.env');
+        $this->dbManager  = getenv('DB_MANAGER');
+        $this->resetDb();
 
-        switch($dbManager)
+    }
+    protected function runCommand($command)
+    {
+        $command = sprintf('%s --quiet', $command);
+        return $this->getApplicationOrCreateOne()->run(new StringInput($command));
+    }
+    protected function tearDown()
+    {
+        $this->resetDb();
+        parent::tearDown();
+    }
+
+    private function resetDb()
+    {
+        switch($this->dbManager)
         {
             case 'mysql':
                 {
-                    $this->runCommand('d:database:import '.$databasePath);
+                    $this->runCommand('d:database:import '.$this->getTestDatabasePath());
                 }
                 break;
             case 'sqlite':
                 {
-                    $file_in  = $databasePath;
+                    $file_in  = $this->getTestDatabasePath();
                     $file_out = $folder.substr(getenv('DATABASE_URL'), 30);
 
                     if(!file_exists($file_in))
@@ -90,25 +101,15 @@ class TestFactorySetup extends WebTestCase
                 break;
             case 'mongodb':
                 {
-                    if(!is_dir($databasePath))
+                    if(!is_dir($this->getTestDatabasePath()))
                     {
-                        throw new TestDatabaseNotFoundException("$databasePath is not a valid test database or does not exist.", 1);
+                        throw new TestDatabaseNotFoundException("$this->getTestDatabasePath() is not a valid test database or does not exist.", 1);
                     }
-
-                    shell_exec('mongorestore --drop -d'.static::$kernel->getContainer()->hasParameter('mongodb_url').' '.$databasePath. ' 2>&1');
+                    shell_exec('mongorestore --drop --quiet --db '.getenv('MONGODB_DB').' '.$this->getTestDatabasePath());
                 }
                 break;
-            default: throw new TestDatabaseNotFoundException("$dbManager is not handled. Valid database managers are 'mysql', 'mongodb' and 'sqlite'.", 1);
+            default: throw new TestDatabaseNotFoundException("$this->dbManager is not handled. Valid database managers are 'mysql', 'mongodb' and 'sqlite'.", 1);
                 break;
         }
-    }
-    protected function runCommand($command)
-    {
-        $command = sprintf('%s --quiet', $command);
-        return $this->getApplicationOrCreateOne()->run(new StringInput($command));
-    }
-    protected function tearDown()
-    {
-        parent::tearDown();
     }
 }

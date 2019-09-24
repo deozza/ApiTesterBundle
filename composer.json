@@ -9,7 +9,7 @@
             "email": "deozza@gmail.com"
         }
     ],
-    "version": "3.1.0",
+    "version": "3.1.1",
     "require": {
         "php": "^7.0",
         "symfony/phpunit-bridge": "^4.2.0 || ^4.3.0",

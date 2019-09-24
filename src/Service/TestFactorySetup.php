@@ -57,13 +57,9 @@ class TestFactorySetup extends WebTestCase
 
         static::$kernel = static::createKernel();
         static::$kernel->boot();
-        $this->em = static::$kernel->getContainer()
-            ->get('doctrine')
-            ->getManager()
-        ;
         $this->getClientOrCreateOne();
 
-        $dotenv = new Dotenv();
+        $dotenv = new Dotenv(true);
         $folder  = static::$kernel->getProjectDir();
         $dotenv->load($folder . '/.env.test');
         $dbManager  = getenv('DB_MANAGER');
@@ -95,7 +91,7 @@ class TestFactorySetup extends WebTestCase
                         throw new TestDatabaseNotFoundException("$databasePath is not a valid test database or does not exist.", 1);
                     }
 
-                    shell_exec('mongorestore --drop -d'.static::$kernel->getContainer()->hasParameter('mongodb_url').' '.$databasePath. ' 2>&1');
+                    shell_exec('mongorestore --drop -d'.getenv('MONGODB_DB').' '.$databasePath. ' 2>&1');
                 }
                 break;
             default: throw new TestDatabaseNotFoundException("$dbManager is not handled. Valid database managers are 'mysql', 'mongodb' and 'sqlite'.", 1);

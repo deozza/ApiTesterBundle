@@ -42,7 +42,16 @@ class TestAsserter extends TestFactorySetup
         $out = null;
         if(array_key_exists('in', $test))
         {
-            $in = $this->loadJsonFile($test['in']);
+            $in = json_decode($this->loadJsonFile($test['in']), true);
+
+            if(!empty($in))
+            {
+                foreach($in as $key=>$value)
+                {
+                    $in[$key] = $this->replaceValue($value);
+                }
+            }
+            $in = json_encode($in);
         }
 
         foreach($test as $key=>$value)
